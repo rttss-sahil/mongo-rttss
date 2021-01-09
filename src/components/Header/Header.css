@@ -1,0 +1,8 @@
+.header__main {
+    display: flex;
+    justify-content: center;
+}
+
+.header__main img {
+    height: 5em;
+}

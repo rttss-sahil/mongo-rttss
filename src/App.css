@@ -1,0 +1,12 @@
+@font-face {
+    font-family: "BrandonText";
+    src: url(./assets/fonts/BrandonText.woff);
+}
+
+
+body,
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "BrandonText";
+}
