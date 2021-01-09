@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom';
 
 import './Login.css'
 
-import { changeDB, changeURL } from '../../redux/actions'
+import { changeDB, changeURL, loadingStart, loadingStop } from '../../redux/actions'
 import store from '../../redux/store'
 
 import Requests from '../../Requests/Requests';
 
-function Login() {
+function Login(props) {
     const [errorURL, setErrorURL] = useState(false),
         [errorDB, setErrorDB] = useState(false),
+        history = useHistory(),
         handleURLChange = (e) => {
             store.dispatch(changeURL(e.target.value))
             const err = !store.getState().URL.match(/^(mongodb)[+]srv:/)
@@ -22,16 +24,24 @@ function Login() {
         },
         handleSubmit = (e) => {
             e.preventDefault();
-            Requests.POST('url', {
-                URL: store.getState().URL
-            })
-                .then(res => res.json())
-                .then(data => console.log(data));
-            Requests.POST('db', {
-                DB: store.getState().DB
-            })
-                .then(res => res.json())
-                .then(data => console.log(data))
+            store.dispatch(loadingStart());
+            try {
+                Requests.POST('url', {
+                    URL: store.getState().URL
+                })
+                    .then(res => res.json())
+                    .then(data => console.log(data));
+                Requests.POST('db', {
+                    DB: store.getState().DB
+                })
+                    .then(res => res.json())
+                    .then(data => console.log(data))
+            } catch (err) {
+                console.log(err)
+            }
+            history.push('/connected')
+
+            store.dispatch(loadingStop())
         };
     return (
         <div className='login__page'>

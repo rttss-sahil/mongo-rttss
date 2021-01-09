@@ -8,6 +8,7 @@ import Loading from './components/Loading/Loading';
 import './App.css'
 import Requests from './Requests/Requests';
 import Connected from './components/Connected/Connected';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 const LoadableLogin = Loadable({
     loader: () => import('./components/Login/Login'),
@@ -44,7 +45,8 @@ const App = () => {
     localStorage.setItem('session', session.code)
 
 
-    return (
+    return (<BrowserRouter>
+
         <Suspense fallback={<Loading />}>
             <Provider store={store}>
                 {session.OK ? (
@@ -59,8 +61,12 @@ const App = () => {
                 ) : (
                         <Loading />
                     )}
+                <Route to="/connected">
+                    <Connected />
+                </Route>
             </Provider>
         </Suspense>
+    </BrowserRouter>
     )
 
 }
