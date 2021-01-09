@@ -10,10 +10,10 @@ export const intialState = {
 const rootReducer = (state = intialState, action) => {
     switch (action.type) {
         case CHANGE_URL:
-            // localStorage.setItem('URL', action.payload)
+            localStorage.setItem('URL', action.payload)
             return { ...state, URL: action.payload }
         case CHANGE_DB:
-            // localStorage.setItem('DB', action.payload)
+            localStorage.setItem('DB', action.payload)
             return { ...state, DB: action.payload }
         default:
             return state;
