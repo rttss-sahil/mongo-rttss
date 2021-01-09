@@ -50,7 +50,7 @@ const App = () => {
                 {session.OK ? (
                     <React.Fragment>
                         <LoadableHeader />
-                        {store.getState().loggedIn ? (
+                        {!store.getState().loggedIn ? (
                             <LoadableLogin />
                         ) : (
                                 <Connected />
