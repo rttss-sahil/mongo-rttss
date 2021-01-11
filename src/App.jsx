@@ -1,23 +1,17 @@
 import React, { Suspense, useState } from 'react';
-import Loadable from 'react-loadable';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
+import Header from './components/Header/Header'
 import Loading from './components/Loading/Loading';
+import Login from './components/Login/Login';
+import Connected from './components/Connected/Connected';
+
+import Requests from './Requests/Requests';
 
 import './App.css'
-import Requests from './Requests/Requests';
-import Connected from './components/Connected/Connected';
-import { BrowserRouter, Route } from 'react-router-dom';
 
-const LoadableLogin = Loadable({
-    loader: () => import('./components/Login/Login'),
-    loading: Loading
-})
-const LoadableHeader = Loadable({
-    loader: () => import("./components/Header/Header"),
-    loading: Loading
-})
 
 const App = () => {
     const [session, setSession] = useState({
@@ -45,28 +39,23 @@ const App = () => {
     localStorage.setItem('session', session.code)
 
 
-    return (<BrowserRouter>
-
-        <Suspense fallback={<Loading />}>
+    return (
+        <BrowserRouter>
             <Provider store={store}>
-                {session.OK ? (
-                    <React.Fragment>
-                        <LoadableHeader />
-                        {!store.getState().loggedIn ? (
-                            <LoadableLogin />
-                        ) : (
+                <Switch>
+                    <Suspense fallback={<Loading />}>
+                        <Header />
+                        {store.getState().loggedIn && (
+                            <Redirect to="/connected">
                                 <Connected />
-                            )}
-                    </React.Fragment>
-                ) : (
-                        <Loading />
-                    )}
-                <Route to="/connected">
-                    <Connected />
-                </Route>
+                            </Redirect>
+                        )}
+                        <Route path="/connected"><Connected /></Route>
+                        <Route exact path="/"><Login /></Route>
+                    </Suspense>
+                </Switch>
             </Provider>
-        </Suspense>
-    </BrowserRouter>
+        </BrowserRouter>
     )
 
 }

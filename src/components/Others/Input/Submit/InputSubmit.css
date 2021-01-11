@@ -1,0 +1,22 @@
+
+.login__page form input[type="submit"] {
+    width: 10em;
+    font-size: 18px;
+    padding: 12px 1em;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-top: 2em;
+    background-color: #13AA52;
+    transition: all 0.3s ease-in;
+}
+
+.login__page form input[type="submit"]:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.login__page form input[type="submit"]:hover {
+    background-color: #0D2419;
+    color: white;
+}

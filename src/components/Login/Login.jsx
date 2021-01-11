@@ -6,18 +6,30 @@ import './Login.css'
 import { changeDB, changeURL, loadingStart, loadingStop } from '../../redux/actions'
 import store from '../../redux/store'
 
+import Loading from '../Loading/Loading'
 import Requests from '../../Requests/Requests';
+import InputSubmit from '../Others/Input/Submit/InputSubmit';
+import InputText from '../Others/Input/Text/InputText';
 
 function Login(props) {
     const [errorURL, setErrorURL] = useState(false),
         [errorDB, setErrorDB] = useState(false),
+        [focused, setFocused] = useState({ URL: false, DB: false }),
         history = useHistory(),
+        handleFocus = (e) => {
+            setFocused({ ...focused, [e.target.name]: true })
+        },
+        handleBlur = (e) => {
+            if (!e.target.value) {
+                e.target.name === "URL" ? setErrorURL(true) : setErrorDB(true)
+            }
+        },
         handleURLChange = (e) => {
             store.dispatch(changeURL(e.target.value))
             const err = !store.getState().URL.match(/^(mongodb)[+]srv:/)
             setErrorURL(err);
         },
-        handleDBchange = (e) => {
+        handleDBChange = (e) => {
             store.dispatch(changeDB(e.target.value))
             const err = !store.getState().DB
             setErrorDB(err);
@@ -40,27 +52,42 @@ function Login(props) {
                 console.log(err)
             }
             history.push('/connected')
-
             store.dispatch(loadingStop())
         };
-    return (
-        <div className='login__page'>
-            <form onSubmit={(e) => handleSubmit(e)}>
-                <div className="input url__field">
-                    <label htmlFor="URL">Enter the {'<mongosrc://>'} url:
-                    <span className="error_text">{errorURL && <div>*</div>}</span>
-                    </label>
-                    <input type="text" style={errorURL ? { borderColor: '#b93c0a' } : {}} onChange={e => handleURLChange(e)} name="URL" />
+    return (<React.Fragment>
+
+        {store.getState().loading ? (
+            <Loading />
+        ) : (
+
+                <div className='login__page'>
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        <InputText
+                            name="URL"
+                            label="Enter the 'mongodb:src//' url"
+                            error={errorURL}
+                            errorText="*"
+                            handleChange={handleURLChange}
+                            focusHandler={handleFocus}
+                            blurHandler={handleBlur}
+                        />
+                        <InputText
+                            name="DB"
+                            label="Enter the '<database>' name:"
+                            error={errorDB}
+                            errorText="*"
+                            handleChange={handleDBChange}
+                            focusHandler={handleFocus}
+                            blurHandler={handleBlur}
+                        />
+                        <InputSubmit
+                            disabled={errorURL || errorDB || (!focused.URL || !focused.DB)}
+                            handleSubmit={handleSubmit}
+                        />
+                    </form>
                 </div>
-                <div className="input db__field">
-                    <label htmlFor="URL">Enter the {'<database>'} name:
-                    <span className="error_text">{errorDB && <div>*</div>}</span>
-                    </label>
-                    <input type="text" style={errorDB ? { borderColor: '#b93c0a' } : {}} onChange={e => handleDBchange(e)} name="DB" />
-                </div>
-                <input disabled={errorDB || errorURL} type="submit" value="Enter" onClick={e => handleSubmit(e)} />
-            </form>
-        </div>
+            )}
+    </React.Fragment>
     )
 }
 
